@@ -1,11 +1,11 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from datetime import datetime
+
 from app.database import get_db
-from app.models import Question, TestAttempt
+from app.models import Question, TestAttempt, StudentAnswer
 from app.auth import get_current_user
 from app.ml.predictor import predict_final_score
-from datetime import datetime
-from fastapi import HTTPException
 
 router = APIRouter(prefix="/test", tags=["Test"])
 
@@ -18,7 +18,10 @@ def get_questions(subject_id: str, db: Session = Depends(get_db)):
         Question.subject_id == subject_id
     ).all()
 
+    if not questions:
+        raise HTTPException(status_code=404, detail="No questions found")
     return questions
+
 # ------------------------
 # Performance History
 # ------------------------
@@ -28,11 +31,9 @@ def performance(
     user_id: int = Depends(get_current_user)
 ):
     attempts = db.query(TestAttempt).filter(
-    TestAttempt.user_id == user_id
-).all()
-
+        TestAttempt.user_id == user_id
+    ).all()
     return attempts
-
 
 # ------------------------
 # AI Prediction
@@ -42,13 +43,11 @@ def predict_performance(
     db: Session = Depends(get_db),
     user_id: int = Depends(get_current_user)
 ):
-
     attempts = db.query(TestAttempt).filter(
-    TestAttempt.user_id == user_id
-).all()
+        TestAttempt.user_id == user_id
+    ).all()
 
     scores = [a.score for a in attempts]
-
     predicted = predict_final_score(scores)
 
     risk = "Low"
@@ -63,7 +62,7 @@ def predict_performance(
     }
 
 # ------------------------
-# submit
+# Submit Test
 # ------------------------
 @router.post("/submit")
 def submit_test(
@@ -79,25 +78,89 @@ def submit_test(
     if not questions:
         raise HTTPException(status_code=404, detail="No questions found")
 
-    score = 0
-
-    for q in questions:
-        if str(q.id) in answers:
-            if answers[str(q.id)] == q.correct_option:
-                score += 1
-
+    # Step 1: Create TestAttempt
     new_attempt = TestAttempt(
         user_id=user_id,
         subject=subject_id,
-        score=score,
+        score=0,  # temporary, updated after saving answers
         total_questions=len(questions),
         attempted_at=datetime.utcnow()
     )
 
     db.add(new_attempt)
     db.commit()
+    db.refresh(new_attempt)
+
+    score = 0
+
+    # Step 2: Save Student Answers
+    for q in questions:
+        if str(q.id) in answers:
+            selected = answers[str(q.id)]
+            is_correct = selected == q.correct_option
+
+            if is_correct:
+                score += 1
+
+            student_answer = StudentAnswer(
+                attempt_id=new_attempt.id,
+                question_id=q.id,
+                selected_option=selected,
+                is_correct=is_correct
+            )
+            db.add(student_answer)
+
+    # Step 3: Update final score
+    new_attempt.score = score
+    db.commit()
 
     return {
         "score": score,
         "total_questions": len(questions)
     }
+
+# ------------------------
+# Test Analysis Route
+# ------------------------
+@router.get("/analysis/{attempt_id}")
+def test_analysis(
+    attempt_id: int,
+    db: Session = Depends(get_db),
+    user_id: int = Depends(get_current_user)
+):
+    # Verify attempt belongs to user
+    attempt = db.query(TestAttempt).filter(
+        TestAttempt.id == attempt_id,
+        TestAttempt.user_id == user_id
+    ).first()
+
+    if not attempt:
+        raise HTTPException(status_code=404, detail="Attempt not found")
+
+    # Fetch all answers with questions
+    answers = db.query(StudentAnswer).filter(
+        StudentAnswer.attempt_id == attempt_id
+    ).all()
+
+    result = []
+    for ans in answers:
+        question = db.query(Question).filter(
+            Question.id == ans.question_id
+        ).first()
+
+        if not question:
+            continue 
+
+        result.append({
+            "question_id": question.id,
+            "question_text": question.question_text,
+            "option_a": question.option_a,
+            "option_b": question.option_b,
+            "option_c": question.option_c,
+            "option_d": question.option_d,
+            "correct_option": question.correct_option,
+            "selected_option": ans.selected_option,
+            "is_correct": ans.is_correct
+        })
+
+    return result
