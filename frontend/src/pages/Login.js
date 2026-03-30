@@ -17,7 +17,7 @@ const handleLogin = async (e) => {
     formData.append("username", username);
     formData.append("password", password);
 
-    const response = await API.post("/login", formData, {
+    const response = await API.post("/users/login", formData, {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },

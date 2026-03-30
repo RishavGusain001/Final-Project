@@ -1,6 +1,7 @@
-from sqlalchemy import Column, Integer, String, Float, Boolean, ForeignKey, Text, DateTime
+from sqlalchemy import Column, Integer, String, Float, Boolean, ForeignKey, Text, DateTime, Date
 from .database import Base
 from sqlalchemy import Column, Integer, String
+from datetime import datetime
 
 class Subject(Base):
     __tablename__ = "subjects"
@@ -48,3 +49,23 @@ class StudentAnswer(Base):
     question_id = Column(Integer, ForeignKey("questions.id"))
     selected_option = Column(String(1))
     is_correct = Column(Boolean)
+
+class Task(Base):
+    __tablename__ = "tasks"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    title = Column(String(255))
+    priority = Column(String(20))
+    subject = Column(String(100))
+    due_date = Column(Date)
+    is_completed = Column(Boolean, default=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+class TaskStreak(Base):
+    __tablename__ = "task_streak"
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer)
+    last_completed_date = Column(Date)
+    streak_count = Column(Integer, default=0)

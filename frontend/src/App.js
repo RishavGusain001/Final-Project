@@ -10,7 +10,7 @@ import LeaderboardPage from "./pages/LeaderboardPage";
 import TestHistoryPage from "./pages/TestHistoryPage";
 import AddQuestionPage from './pages/admin/AddQuestionPage';
 import ManageQuestionsPage from "./pages/admin/ManageQuestionsPage";
-
+import TaskPage from './pages/taskpage';
 
 function App() {
   return (
@@ -27,6 +27,7 @@ function App() {
         <Route path="/history" element={<TestHistoryPage />} /> 
         <Route path="/admin/add-question" element={<AddQuestionPage />} />
         <Route path="/admin/manage-questions" element={<ManageQuestionsPage />} />
+        <Route path="/tasks" element={<TaskPage />} />
       </Routes>
     </Router>
   );

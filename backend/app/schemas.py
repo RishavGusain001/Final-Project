@@ -1,5 +1,6 @@
 from pydantic import BaseModel, EmailStr
-from typing import List
+from typing import List,Optional
+from datetime import date
 
 class UserCreate(BaseModel):
     username: str
@@ -36,3 +37,9 @@ class AnswerSubmission(BaseModel):
 class TestSubmission(BaseModel):
     subject: str
     answers: List[AnswerSubmission]
+
+class TaskCreate(BaseModel):
+    title: str
+    priority: str
+    subject: Optional[str] = None
+    due_date: Optional[date] = None

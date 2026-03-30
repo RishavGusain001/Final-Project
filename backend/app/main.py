@@ -1,13 +1,8 @@
 from fastapi import FastAPI
 from .database import engine
 from . import models
-from .routes import user
-from .routes import test
-from app.routes import performance
+from .routes import user,test,leaderboard,admin,analytics, performance, tasks
 from fastapi.middleware.cors import CORSMiddleware
-from .routes import leaderboard
-from .routes import analytics
-from app.routes import admin
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -27,6 +22,7 @@ app.include_router(performance.router)
 app.include_router(leaderboard.router)
 app.include_router(analytics.router)
 app.include_router(admin.router)
+app.include_router(tasks.router)
 
 @app.get("/")
 def home():

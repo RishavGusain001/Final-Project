@@ -39,8 +39,9 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
 
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
-
+    
 def get_current_admin(user=Depends(get_current_user)):
     if user.role != "admin":
         raise HTTPException(status_code=403, detail="Not authorized")
+        
     return user

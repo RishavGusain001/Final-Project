@@ -1,10 +1,31 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException,status
 from sqlalchemy.orm import Session
 from .. import models, schemas, auth
 from ..database import get_db
 from fastapi.security import OAuth2PasswordRequestForm
+from app.models import User
+from app.auth import get_current_user
 
-router = APIRouter()
+router = APIRouter(prefix="/users", tags=["Users"])
+
+@router.get("/me")
+def get_me(
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+    user = db.query(User).filter(User.id == current_user).first()
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+
+    return {
+        "id": user.id,
+        "name": user.username,
+        "email": user.email
+    }
 
 # REGISTER
 @router.post("/register")

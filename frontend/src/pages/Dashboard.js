@@ -8,10 +8,8 @@ const Dashboard = () => {
   const [trend, setTrend] = useState({});
   const [graphData, setGraphData] = useState([]);
   const [aiInsights, setAiInsights] = useState({});
-
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const [username, setUsername] = useState("");
+  const [streak, setStreak] = useState(0);
 
   const fetchData = async () => {
     const perf = await API.get("/analytics/performance");
@@ -35,10 +33,48 @@ const Dashboard = () => {
     setGraphData(combined);
   };
 
+const fetchUser = async () => {
+  const token = localStorage.getItem("token");
+
+  if (!token) return;  
+
+  try {
+    const res = await API.get("/users/me");
+    setUsername(res.data.name);
+  } catch (err) {
+    console.log("User fetch failed");
+  }
+};
+    
+      const fetchStreak = async () => {
+      const res = await API.get("/tasks/streak");
+      setStreak(res.data.streak);
+    };  
+    
+    const getGreeting = () => {
+      const hour = new Date().getHours();
+      if (hour < 12) return "Good Morning ☀️";
+      if (hour < 18) return "Good Afternoon 🌤️";
+      return "Good Evening 🌙";
+    };
+
+useEffect(() => {
+      fetchData();
+      fetchUser();
+      fetchStreak();
+    }, []);
+
   return (
     <DashboardLayout>
     <div style={{ maxWidth: "900px", margin: "auto" }}>
-    <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
+    <div className="mb-6 flex justify-between items-center">
+            <h2 className="text-xl font-bold">
+                👋 Hello, {getGreeting()}, <span className="text-blue-600">{username}</span>
+            </h2>
+            <h2 className="text-lg font-semibold">
+                🔥 {streak} day streak.   Stay consistent, you're doing great 🚀
+            </h2>
+        </div>
 
     {/* KPI Cards */}
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
