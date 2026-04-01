@@ -1,14 +1,14 @@
 from sqlalchemy import Column, Integer, String, Float, Boolean, ForeignKey, Text, DateTime, Date
 from .database import Base
-from sqlalchemy import Column, Integer, String
 from datetime import datetime
 
 class Subject(Base):
     __tablename__ = "subjects"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(100))
-    
+    name = Column(String(100), nullable=False)
+
+
 class User(Base):
     __tablename__ = "users"
 
@@ -16,20 +16,22 @@ class User(Base):
     username = Column(String(50), unique=True, index=True, nullable=False)
     email = Column(String(100), unique=True, index=True, nullable=False)
     password = Column(String(255), nullable=False)
-    role = Column(String, default="user")
+    role = Column(String(20), default="user")
+
 
 class Question(Base):
     __tablename__ = "questions"
 
     id = Column(Integer, primary_key=True, index=True)
-    subject_id = Column(String(100))
-    question_text = Column(Text)
+    subject_id = Column(Integer, ForeignKey("subjects.id"))
+    question_text = Column(Text, nullable=False)
     option_a = Column(String(255))
     option_b = Column(String(255))
     option_c = Column(String(255))
     option_d = Column(String(255))
     correct_option = Column(String(1))
     difficulty = Column(String(20))
+
 
 class TestAttempt(Base):
     __tablename__ = "test_attempts"
@@ -39,7 +41,8 @@ class TestAttempt(Base):
     subject = Column(String(100))
     score = Column(Float)
     total_questions = Column(Integer)
-    attempted_at = Column(DateTime)
+    attempted_at = Column(DateTime, default=datetime.utcnow)
+
 
 class StudentAnswer(Base):
     __tablename__ = "student_answers"
@@ -50,22 +53,48 @@ class StudentAnswer(Base):
     selected_option = Column(String(1))
     is_correct = Column(Boolean)
 
+
 class Task(Base):
     __tablename__ = "tasks"
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"))
-    title = Column(String(255))
+    title = Column(String(255), nullable=False)
     priority = Column(String(20))
     subject = Column(String(100))
     due_date = Column(Date)
     is_completed = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.utcnow)
 
-class TaskStreak(Base):
-    __tablename__ = "task_streak"
 
-    id = Column(Integer, primary_key=True)
-    user_id = Column(Integer)
+class TaskStreak(Base):
+    __tablename__ = "task_streaks"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
     last_completed_date = Column(Date)
     streak_count = Column(Integer, default=0)
+
+class Career(Base):
+    __tablename__ = "careers"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String)
+    description = Column(String)
+
+
+class Skill(Base):
+    __tablename__ = "skills"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String)
+    career_id = Column(Integer, ForeignKey("careers.id"))
+
+
+class PredictionHistory(Base):
+    __tablename__ = "prediction_history"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer)
+    predicted_career = Column(String)
+    score = Column(Float)

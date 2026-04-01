@@ -11,6 +11,10 @@ import TestHistoryPage from "./pages/TestHistoryPage";
 import AddQuestionPage from './pages/admin/AddQuestionPage';
 import ManageQuestionsPage from "./pages/admin/ManageQuestionsPage";
 import TaskPage from './pages/taskpage';
+import CareerForm from "./pages/member2/CareerForm";
+import CareerResult from "./pages/member2/CareerResult";
+import SkillGap from "./pages/member2/SkillGap";
+import Roadmap from "./pages/member2/Roadmap";
 
 function App() {
   return (
@@ -24,6 +28,10 @@ function App() {
         <Route path="/analysis/:id" element={<AnalysisPage />} />
         <Route path="/practice" element={<PracticePage />} />
         <Route path="/leaderboard" element={<LeaderboardPage />} />
+        <Route path="/career" element={<CareerForm />} />
+        <Route path="/career-result" element={<CareerResult />} />
+        <Route path="/skill-gap" element={<SkillGap />} />
+        <Route path="/roadmap" element={<Roadmap />} />
         <Route path="/history" element={<TestHistoryPage />} /> 
         <Route path="/admin/add-question" element={<AddQuestionPage />} />
         <Route path="/admin/manage-questions" element={<ManageQuestionsPage />} />
