@@ -4,18 +4,13 @@ from . import models
 from .routes import user, test, leaderboard, admin, analytics, performance, tasks, career
 from fastapi.middleware.cors import CORSMiddleware
 
-<<<<<<< HEAD
-# ✅ FIRST create app
-=======
-#--------------------------------kajal---------------
+# resume router (teammate code)
 from app.routes.resume import router as resume_router
 
-models.Base.metadata.create_all(bind=engine)
-
->>>>>>> e10c8bf4b73c9cfb4f25e7e700d89a483b6e78aa
+# create app
 app = FastAPI()
 
-# ✅ THEN include routers
+# include routers
 app.include_router(user.router)
 app.include_router(test.router)
 app.include_router(performance.router)
@@ -25,13 +20,13 @@ app.include_router(admin.router)
 app.include_router(tasks.router)
 app.include_router(resume_router)
 
-# ✅ ADD YOUR MODULE HERE
+# your module
 app.include_router(career.router, prefix="/career", tags=["Career"])
 
-# ✅ DB
+# DB
 models.Base.metadata.create_all(bind=engine)
 
-# ✅ CORS
+# CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:3000"],
@@ -40,7 +35,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ✅ Test route
+# test route
 @app.get("/")
 def home():
     return {"message": "AI Career Platform API is running 🚀"}
