@@ -212,3 +212,71 @@ This project is developed for educational purposes.
 ---
 
 # ⭐ If you like this project, give it a star!
+
+```
+AI-Career-Platform
+├─ backend
+│  ├─ app
+│  │  ├─ auth.py
+│  │  ├─ database.py
+│  │  ├─ main.py
+│  │  ├─ ml
+│  │  │  └─ predictor.py
+│  │  ├─ models.py
+│  │  ├─ routes
+│  │  │  ├─ admin.py
+│  │  │  ├─ analytics.py
+│  │  │  ├─ leaderboard.py
+│  │  │  ├─ performance.py
+│  │  │  ├─ tasks.py
+│  │  │  ├─ test.py
+│  │  │  ├─ user.py
+│  │  │  └─ __init__.py
+│  │  ├─ schemas.py
+│  │  └─ __init__.py
+│  └─ requirements.txt
+├─ database
+├─ frontend
+│  ├─ package-lock.json
+│  ├─ package.json
+│  ├─ postcss.config.js
+│  ├─ public
+│  │  ├─ favicon.ico
+│  │  ├─ index.html
+│  │  ├─ logo192.png
+│  │  ├─ logo512.png
+│  │  ├─ manifest.json
+│  │  └─ robots.txt
+│  ├─ README.md
+│  ├─ src
+│  │  ├─ App.css
+│  │  ├─ App.js
+│  │  ├─ App.test.js
+│  │  ├─ components
+│  │  │  └─ ScoreGraph.js
+│  │  ├─ index.css
+│  │  ├─ index.js
+│  │  ├─ layout
+│  │  │  └─ DashboardLayout.js
+│  │  ├─ logo.svg
+│  │  ├─ pages
+│  │  │  ├─ admin
+│  │  │  │  ├─ AddQuestionPage.js
+│  │  │  │  └─ ManageQuestionsPage.js
+│  │  │  ├─ AnalysisPage.js
+│  │  │  ├─ Dashboard.js
+│  │  │  ├─ LeaderboardPage.js
+│  │  │  ├─ Login.js
+│  │  │  ├─ PracticePage.js
+│  │  │  ├─ Register.js
+│  │  │  ├─ taskpage.js
+│  │  │  ├─ TestHistoryPage.js
+│  │  │  └─ TestPage.js
+│  │  ├─ reportWebVitals.js
+│  │  ├─ services
+│  │  │  └─ api.js
+│  │  └─ setupTests.js
+│  └─ tailwind.config.js
+└─ README.md
+
+```

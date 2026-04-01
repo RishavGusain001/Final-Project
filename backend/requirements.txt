@@ -5,3 +5,6 @@ pymysql
 passlib[bcrypt]
 python-jose
 email-validator
+python-multipart 
+pydantic 
+bcrypt
