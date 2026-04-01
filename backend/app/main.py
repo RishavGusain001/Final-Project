@@ -4,6 +4,9 @@ from . import models
 from .routes import user,test,leaderboard,admin,analytics, performance, tasks
 from fastapi.middleware.cors import CORSMiddleware
 
+#--------------------------------kajal---------------
+from app.routes.resume import router as resume_router
+
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
@@ -23,6 +26,7 @@ app.include_router(leaderboard.router)
 app.include_router(analytics.router)
 app.include_router(admin.router)
 app.include_router(tasks.router)
+app.include_router(resume_router)
 
 @app.get("/")
 def home():

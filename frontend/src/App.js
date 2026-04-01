@@ -11,6 +11,8 @@ import TestHistoryPage from "./pages/TestHistoryPage";
 import AddQuestionPage from './pages/admin/AddQuestionPage';
 import ManageQuestionsPage from "./pages/admin/ManageQuestionsPage";
 import TaskPage from './pages/taskpage';
+import ResumeAnalysis from './pages/resume/ResumeAnalysis';
+import ResumeUpload from './pages/resume/ResumeUpload';
 
 function App() {
   return (
@@ -28,6 +30,8 @@ function App() {
         <Route path="/admin/add-question" element={<AddQuestionPage />} />
         <Route path="/admin/manage-questions" element={<ManageQuestionsPage />} />
         <Route path="/tasks" element={<TaskPage />} />
+        <Route path="/resume" element={<ResumeUpload />} />
+        <Route path="/resume/result" element={<ResumeAnalysis />} />
       </Routes>
     </Router>
   );

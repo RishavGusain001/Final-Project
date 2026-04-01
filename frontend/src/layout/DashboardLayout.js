@@ -77,6 +77,12 @@ const DashboardLayout = ({ children }) => {
             <Link to="/tasks" className="hover:text-blue-600">
             📋 Tasks
           </Link>
+          <Link to="/resume" className="hover:text-blue-600">
+              Resume upload 
+          </Link>
+          <Link to="/resume/result" className="hover:text-blue-600">
+              Resume analysis
+          </Link>
           <button
             onClick={logout}
             className="text-left hover:text-red-500"
