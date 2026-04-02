@@ -1,61 +1,62 @@
 import pandas as pd
+import random
 
 data = []
 
-# FRONTEND
-for _ in range(500):
-    data.append([0,0,0,0,1,1,7.5,2,"Frontend Developer"])
-    data.append([0,0,0,0,1,1,7.0,2,"UI/UX Designer"])
+def add_rows(career, base_skills, interest, cgpa_range, proj_range, n_rows):
+    for _ in range(n_rows):
+        row = [
+            random.choice(base_skills.get("python",[0])),
+            random.choice(base_skills.get("java",[0])),
+            random.choice(base_skills.get("ml",[0])),
+            random.choice(base_skills.get("sql",[0])),
+            random.choice(base_skills.get("web_dev",[0])),
+            interest,
+            round(random.uniform(*cgpa_range), 1),
+            random.randint(*proj_range),
+            career
+        ]
+        data.append(row)
 
-# WEB / FULL STACK
-for _ in range(500):
-    data.append([1,1,0,1,1,1,8.2,4,"Full Stack Developer"])
-    data.append([0,1,0,1,1,1,7.8,3,"Backend Developer"])
-    data.append([0,0,0,0,1,1,7.2,2,"Web Developer"])
+# FRONTEND
+add_rows("Frontend Developer", {"web_dev":[1], "python":[0]}, 1, (6.5,9.0), (1,5), 400)
+add_rows("UI/UX Designer", {"web_dev":[1]}, 1, (6.0,8.5), (1,4), 300)
+
+# FULL STACK / BACKEND
+add_rows("Full Stack Developer", {"python":[1], "java":[1], "sql":[1], "web_dev":[1]}, 1, (7.0,9.5), (2,6), 400)
+add_rows("Backend Developer", {"python":[1], "sql":[1]}, 1, (6.5,9.0), (2,5), 300)
 
 # MOBILE
-for _ in range(400):
-    data.append([0,1,0,0,0,1,7.5,3,"Mobile App Developer"])
-    data.append([0,1,0,0,0,1,7.2,3,"Android Developer"])
-    data.append([0,1,0,0,0,1,7.3,3,"iOS Developer"])
+add_rows("Mobile App Developer", {"java":[1]}, 1, (6.5,9.0), (2,5), 300)
+add_rows("Android Developer", {"java":[1]}, 1, (6.0,8.5), (1,4), 200)
+add_rows("iOS Developer", {"python":[1]}, 1, (6.0,8.5), (1,4), 200)
 
 # AI / ML
-for _ in range(600):
-    data.append([1,0,1,0,0,0,9.0,5,"AI Engineer"])
-    data.append([1,0,1,0,0,0,8.5,4,"Machine Learning Engineer"])
+add_rows("AI Engineer", {"python":[1], "ml":[1]}, 1, (7.5,9.5), (3,6), 400)
+add_rows("Machine Learning Engineer", {"python":[1], "ml":[1]}, 1, (7.0,9.0), (2,5), 300)
 
 # DATA
-for _ in range(600):
-    data.append([1,0,1,1,0,2,8.5,4,"Data Scientist"])
-    data.append([0,0,0,1,0,2,7.2,2,"Data Analyst"])
-    data.append([0,0,0,1,0,2,7.0,2,"Database Administrator"])
+add_rows("Data Scientist", {"python":[1], "ml":[1], "sql":[1]}, 1, (7.5,9.5), (3,6), 400)
+add_rows("Data Analyst", {"sql":[1]}, 1, (6.0,8.0), (1,4), 300)
+add_rows("Database Administrator", {"sql":[1]}, 1, (6.0,8.0), (1,3), 200)
 
 # CYBER SECURITY
-for _ in range(500):
-    data.append([0,0,0,0,0,3,7.5,2,"Cyber Security Analyst"])
-    data.append([0,0,0,0,0,3,7.8,3,"Ethical Hacker"])
+add_rows("Cyber Security Analyst", {"python":[0], "java":[0]}, 1, (6.5,9.0), (2,5), 300)
+add_rows("Ethical Hacker", {"python":[1]}, 1, (7.0,9.0), (2,5), 200)
 
 # CLOUD / DEVOPS
-for _ in range(500):
-    data.append([1,0,0,0,0,0,8.2,3,"Cloud Engineer"])
-    data.append([1,0,0,0,0,0,8.0,3,"DevOps Engineer"])
+add_rows("Cloud Engineer", {"python":[1]}, 1, (7.0,9.0), (2,5), 300)
+add_rows("DevOps Engineer", {"python":[1]}, 1, (7.0,9.0), (2,5), 300)
 
 # SOFTWARE / SYSTEM
-for _ in range(500):
-    data.append([1,1,0,0,0,0,8.0,3,"Software Engineer"])
-    data.append([1,1,0,0,0,0,7.8,3,"System Engineer"])
+add_rows("Software Engineer", {"python":[1], "java":[1]}, 1, (6.5,9.0), (2,5), 400)
+add_rows("System Engineer", {"java":[1]}, 1, (6.0,8.5), (1,4), 300)
 
 # GAME DEV
-for _ in range(300):
-    data.append([0,1,0,0,0,1,7.5,3,"Game Developer"])
+add_rows("Game Developer", {"java":[1]}, 1, (6.5,9.0), (2,5), 300)
 
-columns = [
-    "python", "java", "ml", "sql", "web_dev",
-    "interest", "cgpa", "projects", "career"
-]
-
+columns = ["python","java","ml","sql","web_dev","interest","cgpa","projects","career"]
 df = pd.DataFrame(data, columns=columns)
 
 df.to_csv("career_data.csv", index=False)
-
-print("✅ ADVANCED DATASET CREATED (10,000+ rows)")
+print(f"✅ Dataset created with {len(df)} rows and realistic variation")

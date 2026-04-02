@@ -1,14 +1,25 @@
 from sqlalchemy import Column, Integer, String, Float, Boolean, ForeignKey, Text, DateTime, Date, TIMESTAMP
-from .database import Base
+from sqlalchemy.orm import relationship
+from app.database import Base
 from datetime import datetime
 from sqlalchemy.sql import func
+
+class Roadmap(Base):
+    __tablename__ = "roadmap"
+
+    id = Column(Integer, primary_key=True, index=True)
+    career_id = Column(Integer, ForeignKey("careers.id"), nullable=False)
+    step_number = Column(Integer, nullable=False)
+    step_title = Column(String(255))
+    step_description = Column(String)
+
+    career = relationship("Career", back_populates="roadmaps")
 
 class Subject(Base):
     __tablename__ = "subjects"
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(100), nullable=False)
-
 
 class User(Base):
     __tablename__ = "users"
@@ -18,7 +29,6 @@ class User(Base):
     email = Column(String(100), unique=True, index=True, nullable=False)
     password = Column(String(255), nullable=False)
     role = Column(String(20), default="user")
-
 
 class Question(Base):
     __tablename__ = "questions"
@@ -33,7 +43,6 @@ class Question(Base):
     correct_option = Column(String(1))
     difficulty = Column(String(20))
 
-
 class TestAttempt(Base):
     __tablename__ = "test_attempts"
 
@@ -44,7 +53,6 @@ class TestAttempt(Base):
     total_questions = Column(Integer)
     attempted_at = Column(DateTime, default=datetime.utcnow)
 
-
 class StudentAnswer(Base):
     __tablename__ = "student_answers"
 
@@ -53,7 +61,6 @@ class StudentAnswer(Base):
     question_id = Column(Integer, ForeignKey("questions.id"))
     selected_option = Column(String(1))
     is_correct = Column(Boolean)
-
 
 class Task(Base):
     __tablename__ = "tasks"
@@ -66,7 +73,6 @@ class Task(Base):
     due_date = Column(Date)
     is_completed = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.utcnow)
-
 
 class TaskStreak(Base):
     __tablename__ = "task_streaks"
@@ -83,6 +89,9 @@ class Career(Base):
     name = Column(String(200))
     description = Column(String(400))
 
+    # ✅ Relationships
+    skills = relationship("Skill", back_populates="career")
+    roadmaps = relationship("Roadmap", back_populates="career")
 
 class Skill(Base):
     __tablename__ = "skills"
@@ -91,6 +100,7 @@ class Skill(Base):
     name = Column(String(400))
     career_id = Column(Integer, ForeignKey("careers.id"))
 
+    career = relationship("Career", back_populates="skills")
 
 class PredictionHistory(Base):
     __tablename__ = "prediction_history"
