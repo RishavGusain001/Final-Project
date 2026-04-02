@@ -1,55 +1,79 @@
-import React from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { useLocation } from "react-router-dom";
 import DashboardLayout from "../../layout/DashboardLayout";
+import axios from "axios";
+
 const CareerResult = () => {
   const location = useLocation();
-  const navigate = useNavigate();
-
-  const data = location.state;
-  if (!data || !data.top_careers || data.top_careers.length === 0) {
-    return <h2>No Data Found</h2>;
-  }
-
-  const handleViewRoadmap = (career) => {
-    // Pass only the clicked career to roadmap
-    navigate("/roadmap", { state: { careers: [career] } });
+  const { top_careers } = location.state || { top_careers: [] };
+  const [roadmapData, setRoadmapData] = useState({});
+  
+  const fetchRoadmap = (career) => {
+    axios.get(`http://127.0.0.1:8000/career/roadmap/${encodeURIComponent(career)}`)
+      .then(res => {
+        setRoadmapData(prev => ({ ...prev, [career]: res.data }));
+      })
+      .catch(err => console.error("Error fetching roadmap:", err));
   };
 
   return (
     <DashboardLayout>
-    <div style={{ padding: "20px" }}>
-      <h2>Top Career Recommendations</h2>
+      <div style={{ padding: "30px" }}>
+        <h2 style={{ marginBottom: "20px" }}>Top Career Recommendations</h2>
 
-      {data.top_careers.map((item, index) => (
-        <div
-          key={index}
-          style={{
-            border: "1px solid #ccc",
-            padding: "15px",
-            margin: "10px 0",
-            borderRadius: "10px",
-          }}
-        >
-          <h3>{item.career}</h3>
-          <p>Match Score: {item.score}%</p>
-
-          <button
-            onClick={() => handleViewRoadmap(item)}
+        {top_careers.map((careerObj, idx) => (
+          <div
+            key={idx}
             style={{
-              marginTop: "10px",
-              padding: "6px 12px",
-              background: "#3b82f6",
-              color: "white",
-              border: "none",
-              borderRadius: "5px",
-              cursor: "pointer",
+              marginBottom: "25px",
+              padding: "20px",
+              border: "1px solid #ccc",
+              borderRadius: "10px",
+              background: "#f9f9f9",
             }}
           >
-            View Roadmap
-          </button>
-        </div>
-      ))}
-    </div>
+            <h3>{careerObj.career}</h3>
+            <p><strong>Match Score:</strong> {careerObj.score}%</p>
+
+            <button
+              onClick={() => fetchRoadmap(careerObj.career)}
+              style={{
+                marginTop: "10px",
+                padding: "10px 20px",
+                backgroundColor: "#4CAF50",
+                color: "white",
+                border: "none",
+                borderRadius: "5px",
+                cursor: "pointer",
+              }}
+            >
+              View Roadmap
+            </button>
+
+            {/* Inline Roadmap */}
+            {roadmapData[careerObj.career] && roadmapData[careerObj.career].length > 0 && (
+              <div style={{ marginTop: "20px" }}>
+                <h4>{careerObj.career} Roadmap 🚀</h4>
+                {roadmapData[careerObj.career].map((step) => (
+                  <div
+                    key={step.step}
+                    style={{
+                      marginTop: "10px",
+                      border: "1px solid #ddd",
+                      padding: "10px",
+                      borderRadius: "8px",
+                      background: "#fff",
+                    }}
+                  >
+                    <h5>Step {step.step}: {step.title}</h5>
+                    <p>{step.description}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
     </DashboardLayout>
   );
 };

@@ -1,63 +1,82 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import DashboardLayout from "../../layout/DashboardLayout";
-import { useLocation } from "react-router-dom";
+import axios from "axios";
 
 const Roadmap = () => {
-  const location = useLocation();
+  const [careers, setCareers] = useState([]);
+  const [selectedCareer, setSelectedCareer] = useState("");
+  const [roadmap, setRoadmap] = useState([]);
 
-  // ✅ GET ALL CAREERS
-  const careers =
-    location.state?.careers ||
-    JSON.parse(localStorage.getItem("allCareers")) ||
-    [];
+  // ✅ Fetch all careers for dropdown
+  useEffect(() => {
+    axios
+      .get("http://127.0.0.1:8000/career/careers")
+      .then((res) => setCareers(res.data))
+      .catch((err) => console.error("Error fetching careers:", err));
+  }, []);
 
-  if (careers.length === 0) return <div>No Data Found</div>;
+  // ✅ Fetch roadmap when career is selected
+  useEffect(() => {
+    if (selectedCareer) {
+      axios
+        .get(`http://127.0.0.1:8000/career/roadmap/${encodeURIComponent(selectedCareer)}`)
+        .then((res) => setRoadmap(res.data))
+        .catch((err) => console.error("Error fetching roadmap:", err));
+    }
+  }, [selectedCareer]);
 
-  // 🔥 ROADMAP DATA
-  const roadmapData = {
-    "Frontend Developer": ["HTML", "CSS", "JavaScript", "React"],
-    "Backend Developer": ["Java/Python", "APIs", "Database"],
-    "AI Engineer": ["Python", "ML", "Deep Learning"],
-    "Machine Learning Engineer": ["Python", "ML Algorithms", "Deployment"],
-    "Data Scientist": ["Python", "Statistics", "ML"],
-    "Data Analyst": ["SQL", "Excel", "Power BI"],
-    "UI/UX Designer": ["Figma", "Wireframing", "User Research"],
-    "DevOps Engineer": ["Linux", "Docker", "CI/CD"],
-    "Software Engineer": ["DSA", "Projects", "System Design"]
-  };
   return (
-  <DashboardLayout>
-    <div style={{ padding: "20px" }}>
-      <h2>Career Roadmaps 🚀</h2>
+    <DashboardLayout>
+      <div style={{ padding: "20px" }}>
+        <h2>Choose a Career Roadmap 🚀</h2>
 
-      {careers.map((item, index) => {
-        const steps = roadmapData[item.career] || ["Learn basics", "Build projects"];
+        {/* Dropdown */}
+        <select
+          value={selectedCareer}
+          onChange={(e) => setSelectedCareer(e.target.value)}
+          style={{
+            padding: "10px",
+            marginTop: "10px",
+            borderRadius: "5px",
+            border: "1px solid #ccc",
+          }}
+        >
+          <option value="">-- Select a Career --</option>
+          {careers.map((career) => (
+            <option key={career} value={career}>
+              {career}
+            </option>
+          ))}
+        </select>
 
-        return (
-          <div
-            key={index}
-            style={{
-              marginTop: "20px",
-              border: "1px solid #ccc",
-              padding: "15px",
-              borderRadius: "10px",
-              background: "#f9f9f9"
-            }}
-          >
-            <h3>{item.career}</h3>
-            <p>Match Score: {item.score}%</p>
+        {/* Roadmap display */}
+        {selectedCareer && roadmap.length === 0 && (
+          <div style={{ marginTop: "20px" }}>No Roadmap Found</div>
+        )}
 
-            <ul>
-              {steps.map((step, i) => (
-                <li key={i}>
-                  {i + 1}. {step}
-                </li>
-              ))}
-            </ul>
+        {roadmap.length > 0 && (
+          <div style={{ marginTop: "20px" }}>
+            <h3>{selectedCareer} Roadmap</h3>
+            {roadmap.map((step) => (
+              <div
+                key={step.step}
+                style={{
+                  marginTop: "15px",
+                  border: "1px solid #ccc",
+                  padding: "15px",
+                  borderRadius: "10px",
+                  background: "#f9f9f9",
+                }}
+              >
+                <h4>
+                  Step {step.step}: {step.title}
+                </h4>
+                <p>{step.description}</p>
+              </div>
+            ))}
           </div>
-        );
-      })}
-    </div>
+        )}
+      </div>
     </DashboardLayout>
   );
 };
