@@ -58,12 +58,8 @@ const CareerForm = () => {
   };
 
   return (
-<<<<<<< HEAD
     <DashboardLayout>
-    <div>
-=======
     <div style={{ padding: "20px" }}>
->>>>>>> 91f0a3cfa240004c9a94ee90fac2e97b71d53416
       <h2>Career Recommendation</h2>
 
       <input

@@ -1,7 +1,5 @@
 import React from "react";
-<<<<<<< HEAD
 import DashboardLayout from "../../layout/DashboardLayout";
-=======
 import { useLocation } from "react-router-dom";
 
 const Roadmap = () => {
@@ -27,19 +25,8 @@ const Roadmap = () => {
     "DevOps Engineer": ["Linux", "Docker", "CI/CD"],
     "Software Engineer": ["DSA", "Projects", "System Design"]
   };
->>>>>>> 91f0a3cfa240004c9a94ee90fac2e97b71d53416
-
   return (
-<<<<<<< HEAD
-    <DashboardLayout>
-    <div>
-      <h2>Learning Roadmap</h2>
-      <ul>
-        <li>Learn Python</li>
-        <li>Learn Machine Learning</li>
-        <li>Build Projects</li>
-      </ul>
-=======
+  <DashboardLayout>
     <div style={{ padding: "20px" }}>
       <h2>Career Roadmaps 🚀</h2>
 
@@ -70,7 +57,6 @@ const Roadmap = () => {
           </div>
         );
       })}
->>>>>>> 91f0a3cfa240004c9a94ee90fac2e97b71d53416
     </div>
     </DashboardLayout>
   );
