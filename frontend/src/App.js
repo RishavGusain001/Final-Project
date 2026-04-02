@@ -39,6 +39,7 @@ function App() {
         <Route path="/admin/add-question" element={<AddQuestionPage />} />
         <Route path="/admin/manage-questions" element={<ManageQuestionsPage />} />
         <Route path="/tasks" element={<TaskPage />} />
+        <Route path="/career-result" element={<CareerResult />} />
         <Route path="/resume" element={<ResumeUpload />} />
         <Route path="/resume/result" element={<ResumeAnalysis />} />
         <Route path="/resume/history" element={<ResumeHistory />} />
@@ -47,4 +48,4 @@ function App() {
   );
 }
 
-export default App;
+export default App; 

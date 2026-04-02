@@ -68,6 +68,7 @@ const DashboardLayout = ({ children }) => {
                 <Link to="/analysis" className="hover:text-blue-600 font-medium text-[14px]">📊 Analysis</Link>
                 <Link to="/history" className="hover:text-blue-600 font-medium text-[14px]">📜 History</Link>
                 <Link to="/practice" className="hover:text-blue-600 font-medium text-[14px]">🎯 Practice</Link>
+                <Link to="/leaderboard" className="hover:text-blue-600 font-medium text-[14px]"></Link>
               </div>
             )}
           </div>
@@ -122,12 +123,13 @@ const DashboardLayout = ({ children }) => {
           >
             🚪 Logout
           </button>
-            <Link
+          <Link
             to="/leaderboard"
             className="flex items-center gap-2 hover:text-blue-600 font-semibold text-[15px] tracking-wide"
           >
             🏆 Leaderboard
           </Link>
+
           {/* ADMIN */}
           {role === "admin" && (
             <>
