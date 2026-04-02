@@ -11,15 +11,13 @@ import TestHistoryPage from "./pages/TestHistoryPage";
 import AddQuestionPage from './pages/admin/AddQuestionPage';
 import ManageQuestionsPage from "./pages/admin/ManageQuestionsPage";
 import TaskPage from './pages/taskpage';
-<<<<<<< HEAD
 import CareerForm from "./pages/member2/CareerForm";
 import CareerResult from "./pages/member2/CareerResult";
 import SkillGap from "./pages/member2/SkillGap";
 import Roadmap from "./pages/member2/Roadmap";
-=======
 import ResumeAnalysis from './pages/resume/ResumeAnalysis';
 import ResumeUpload from './pages/resume/ResumeUpload';
->>>>>>> e10c8bf4b73c9cfb4f25e7e700d89a483b6e78aa
+import ResumeHistory from './pages/resume/ResumeHistory';
 
 function App() {
   return (
@@ -43,6 +41,7 @@ function App() {
         <Route path="/tasks" element={<TaskPage />} />
         <Route path="/resume" element={<ResumeUpload />} />
         <Route path="/resume/result" element={<ResumeAnalysis />} />
+        <Route path="/resume/history" element={<ResumeHistory />} />
       </Routes>
     </Router>
   );

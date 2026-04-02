@@ -1,6 +1,7 @@
-from sqlalchemy import Column, Integer, String, Float, Boolean, ForeignKey, Text, DateTime, Date
+from sqlalchemy import Column, Integer, String, Float, Boolean, ForeignKey, Text, DateTime, Date, TIMESTAMP
 from .database import Base
 from datetime import datetime
+from sqlalchemy.sql import func
 
 class Subject(Base):
     __tablename__ = "subjects"
@@ -79,15 +80,15 @@ class Career(Base):
     __tablename__ = "careers"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String)
-    description = Column(String)
+    name = Column(String(200))
+    description = Column(String(400))
 
 
 class Skill(Base):
     __tablename__ = "skills"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String)
+    name = Column(String(400))
     career_id = Column(Integer, ForeignKey("careers.id"))
 
 
@@ -96,5 +97,17 @@ class PredictionHistory(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer)
-    predicted_career = Column(String)
+    predicted_career = Column(String(400))
     score = Column(Float)
+
+class ResumeAnalysis(Base):
+    __tablename__ = "resume_analysis"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, nullable=True)
+    score = Column(Integer)
+    ats_score = Column(Integer)
+    predicted_role = Column(String(100))
+    confidence = Column(Float)
+    skills = Column(Text)
+    created_at = Column(TIMESTAMP, server_default=func.now())

@@ -1,4 +1,5 @@
-# 🚀 AI Career Platform  
+# 🚀 AI Career Platform
+
 An Intelligent Academic & Career Guidance System built using FastAPI, React, MySQL and Machine Learning.
 
 ---
@@ -21,6 +22,7 @@ This project is developed as a BCA Major Project (Full Stack + AI Integration).
 ## 🏗️ Tech Stack
 
 ### 🔹 Backend
+
 - FastAPI
 - SQLAlchemy
 - MySQL
@@ -28,12 +30,14 @@ This project is developed as a BCA Major Project (Full Stack + AI Integration).
 - Pydantic
 
 ### 🔹 Frontend
+
 - React
 - Axios
 - Chart.js / Recharts
 - Tailwind / CSS
 
 ### 🔹 Machine Learning
+
 - Scikit-learn
 - Random Forest (Career Recommendation)
 - Regression Model (Performance Prediction)
@@ -43,11 +47,11 @@ This project is developed as a BCA Major Project (Full Stack + AI Integration).
 
 ## 👥 Team Members
 
-| Member | Module |
-|--------|--------|
-| Rishav (Backend Lead) | Core Backend + Integration |
-| Sneha | Academic Performance & Prediction |
-| Kajal | Career Recommendation + Resume NLP |
+| Member                | Module                             |
+| --------------------- | ---------------------------------- |
+| Rishav (Backend Lead) | Core Backend + Integration         |
+| Sneha                 | Academic Performance & Prediction  |
+| Kajal                 | Career Recommendation + Resume NLP |
 
 ---
 
@@ -116,6 +120,7 @@ uvicorn app.main:app --reload
 ```
 
 Backend runs at:
+
 ```
 http://127.0.0.1:8000
 ```
@@ -131,6 +136,7 @@ npm start
 ```
 
 Frontend runs at:
+
 ```
 http://localhost:3000
 ```
@@ -152,6 +158,7 @@ Tables will be created automatically using SQLAlchemy models.
 # 🧠 Key Modules
 
 ## 📊 Academic Performance & Test Intelligence
+
 - Subject-wise tests
 - Timer-based evaluation
 - Score storage
@@ -159,18 +166,21 @@ Tables will be created automatically using SQLAlchemy models.
 - ML-based final score prediction
 
 ## 💼 Career Recommendation & Skill Gap
+
 - Career prediction using Random Forest
 - Compatibility score calculation
 - Skill gap percentage
 - Radar & bar graph visualization
 
 ## 📄 Resume Builder & Analyzer
+
 - Resume generation (PDF)
 - NLP-based resume scoring
 - TF-IDF + Cosine Similarity
 - Missing keyword detection
 
 ## 🎯 Adaptive Learning System
+
 - Weak topic detection
 - Dynamic practice question difficulty
 - Notes tracking
@@ -212,71 +222,3 @@ This project is developed for educational purposes.
 ---
 
 # ⭐ If you like this project, give it a star!
-
-```
-AI-Career-Platform
-├─ backend
-│  ├─ app
-│  │  ├─ auth.py
-│  │  ├─ database.py
-│  │  ├─ main.py
-│  │  ├─ ml
-│  │  │  └─ predictor.py
-│  │  ├─ models.py
-│  │  ├─ routes
-│  │  │  ├─ admin.py
-│  │  │  ├─ analytics.py
-│  │  │  ├─ leaderboard.py
-│  │  │  ├─ performance.py
-│  │  │  ├─ tasks.py
-│  │  │  ├─ test.py
-│  │  │  ├─ user.py
-│  │  │  └─ __init__.py
-│  │  ├─ schemas.py
-│  │  └─ __init__.py
-│  └─ requirements.txt
-├─ database
-├─ frontend
-│  ├─ package-lock.json
-│  ├─ package.json
-│  ├─ postcss.config.js
-│  ├─ public
-│  │  ├─ favicon.ico
-│  │  ├─ index.html
-│  │  ├─ logo192.png
-│  │  ├─ logo512.png
-│  │  ├─ manifest.json
-│  │  └─ robots.txt
-│  ├─ README.md
-│  ├─ src
-│  │  ├─ App.css
-│  │  ├─ App.js
-│  │  ├─ App.test.js
-│  │  ├─ components
-│  │  │  └─ ScoreGraph.js
-│  │  ├─ index.css
-│  │  ├─ index.js
-│  │  ├─ layout
-│  │  │  └─ DashboardLayout.js
-│  │  ├─ logo.svg
-│  │  ├─ pages
-│  │  │  ├─ admin
-│  │  │  │  ├─ AddQuestionPage.js
-│  │  │  │  └─ ManageQuestionsPage.js
-│  │  │  ├─ AnalysisPage.js
-│  │  │  ├─ Dashboard.js
-│  │  │  ├─ LeaderboardPage.js
-│  │  │  ├─ Login.js
-│  │  │  ├─ PracticePage.js
-│  │  │  ├─ Register.js
-│  │  │  ├─ taskpage.js
-│  │  │  ├─ TestHistoryPage.js
-│  │  │  └─ TestPage.js
-│  │  ├─ reportWebVitals.js
-│  │  ├─ services
-│  │  │  └─ api.js
-│  │  └─ setupTests.js
-│  └─ tailwind.config.js
-└─ README.md
-
-```

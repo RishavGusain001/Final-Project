@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { uploadResume } from "../../services/api";
 import { useNavigate } from "react-router-dom";
+import DashboardLayout from "../../layout/DashboardLayout";
 
 function ResumeUpload() {
   const [file, setFile] = useState(null);
@@ -31,6 +32,7 @@ function ResumeUpload() {
   };
 
   return (
+    <DashboardLayout>
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="bg-white shadow-lg rounded-2xl p-8 w-[400px] text-center">
         <h2 className="text-2xl font-bold mb-6">Upload Resume</h2>
@@ -51,6 +53,7 @@ function ResumeUpload() {
         </button>
       </div>
     </div>
+    </DashboardLayout>
   );
 }
 

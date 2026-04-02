@@ -3,16 +3,10 @@ from .database import engine
 from . import models
 from .routes import user, test, leaderboard, admin, analytics, performance, tasks, career
 from fastapi.middleware.cors import CORSMiddleware
-
-<<<<<<< HEAD
-# ✅ FIRST create app
-=======
 #--------------------------------kajal---------------
 from app.routes.resume import router as resume_router
 
 models.Base.metadata.create_all(bind=engine)
-
->>>>>>> e10c8bf4b73c9cfb4f25e7e700d89a483b6e78aa
 app = FastAPI()
 
 # ✅ THEN include routers

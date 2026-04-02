@@ -1,10 +1,12 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import DashboardLayout from "../../layout/DashboardLayout";
 
 function CareerForm() {
   const navigate = useNavigate();
 
   return (
+    <DashboardLayout>
     <div>
       <h2>Career Recommendation</h2>
 
@@ -15,6 +17,7 @@ function CareerForm() {
         Get Career
       </button>
     </div>
+    </DashboardLayout>
   );
 }
 

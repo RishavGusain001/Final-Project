@@ -1,10 +1,12 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import DashboardLayout from "../../layout/DashboardLayout";
 
 function SkillGap() {
   const navigate = useNavigate();
 
   return (
+    <DashboardLayout>
     <div>
       <h2>Skill Gap</h2>
       <p>Missing: Python, ML</p>
@@ -14,6 +16,7 @@ function SkillGap() {
         View Roadmap
       </button>
     </div>
+    </DashboardLayout>
   );
 }
 

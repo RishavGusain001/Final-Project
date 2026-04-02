@@ -1,7 +1,9 @@
 import React from "react";
+import DashboardLayout from "../../layout/DashboardLayout";
 
 function Roadmap() {
   return (
+    <DashboardLayout>
     <div>
       <h2>Learning Roadmap</h2>
       <ul>
@@ -10,6 +12,7 @@ function Roadmap() {
         <li>Build Projects</li>
       </ul>
     </div>
+    </DashboardLayout>
   );
 }
 

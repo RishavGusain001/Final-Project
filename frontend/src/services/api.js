@@ -79,3 +79,6 @@ export const getAnalytics = () => API.get("/analytics");
 
 // Export main API instance
 export default API;
+
+// resume history api
+export const getResumeHistory = () => API.get("/resume/history");
