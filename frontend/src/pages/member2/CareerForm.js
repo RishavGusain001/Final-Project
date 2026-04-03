@@ -46,14 +46,40 @@ const CareerForm = () => {
 
   return (
     <DashboardLayout>
-      <div style={{ padding: "40px", maxWidth: "600px", margin: "0 auto" }}>
-        <h2 style={{ marginBottom: "20px", textAlign: "center" }}>
+      <div
+        style={{
+          minHeight: "100vh",
+          backgroundColor: "#ffffff", // plain white background
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "40px",
+        }}
+      >
+        <h2
+          style={{
+            marginBottom: "30px",
+            fontSize: "36px",
+            fontWeight: "bold",
+            color: "#1a237e", // professional blue
+            textShadow: "1px 1px 3px rgba(0,0,0,0.2)",
+          }}
+        >
           Career Recommendation
         </h2>
 
         {/* Skills Input */}
-        <div style={{ marginBottom: "20px" }}>
-          <label style={{ fontWeight: "bold", display: "block", marginBottom: "8px" }}>
+        <div style={{ marginBottom: "20px", width: "100%", maxWidth: "500px" }}>
+          <label
+            style={{
+              fontWeight: "bold",
+              display: "block",
+              marginBottom: "8px",
+              color: "#0d47a1",
+              fontSize: "16px",
+            }}
+          >
             Enter Skills:
           </label>
           <input
@@ -63,17 +89,29 @@ const CareerForm = () => {
             onChange={(e) => setSkillsInput(e.target.value)}
             style={{
               width: "100%",
-              padding: "10px",
-              borderRadius: "6px",
-              border: "1px solid #ccc",
-              fontSize: "14px",
+              padding: "14px",
+              borderRadius: "8px",
+              border: "2px solid #90caf9",
+              fontSize: "15px",
+              outline: "none",
+              transition: "border-color 0.3s ease",
             }}
+            onFocus={(e) => (e.target.style.borderColor = "#1e88e5")}
+            onBlur={(e) => (e.target.style.borderColor = "#90caf9")}
           />
         </div>
 
         {/* Interest Input */}
-        <div style={{ marginBottom: "20px" }}>
-          <label style={{ fontWeight: "bold", display: "block", marginBottom: "8px" }}>
+        <div style={{ marginBottom: "20px", width: "100%", maxWidth: "500px" }}>
+          <label
+            style={{
+              fontWeight: "bold",
+              display: "block",
+              marginBottom: "8px",
+              color: "#0d47a1",
+              fontSize: "16px",
+            }}
+          >
             Enter Interest:
           </label>
           <input
@@ -83,31 +121,44 @@ const CareerForm = () => {
             onChange={(e) => setInterest(e.target.value)}
             style={{
               width: "100%",
-              padding: "10px",
-              borderRadius: "6px",
-              border: "1px solid #ccc",
-              fontSize: "14px",
+              padding: "14px",
+              borderRadius: "8px",
+              border: "2px solid #90caf9",
+              fontSize: "15px",
+              outline: "none",
+              transition: "border-color 0.3s ease",
             }}
+            onFocus={(e) => (e.target.style.borderColor = "#1e88e5")}
+            onBlur={(e) => (e.target.style.borderColor = "#90caf9")}
           />
         </div>
 
         {/* Submit Button */}
         <button
           onClick={handleSubmit}
+          disabled={!skillsInput.trim()}
           style={{
             width: "100%",
-            padding: "12px",
-            backgroundColor: "#4CAF50",
+            maxWidth: "500px",
+            padding: "16px",
+            background: !skillsInput.trim()
+              ? "#b0bec5"
+              : "linear-gradient(90deg, #1e88e5, #0d47a1)",
             color: "white",
             border: "none",
-            borderRadius: "6px",
-            cursor: "pointer",
-            fontSize: "16px",
+            borderRadius: "10px",
+            cursor: !skillsInput.trim() ? "not-allowed" : "pointer",
+            fontSize: "18px",
             fontWeight: "bold",
-            transition: "background-color 0.3s ease",
+            letterSpacing: "1px",
+            transition: "transform 0.2s ease, background 0.3s ease",
           }}
-          onMouseOver={(e) => (e.target.style.backgroundColor = "#45a049")}
-          onMouseOut={(e) => (e.target.style.backgroundColor = "#4CAF50")}
+          onMouseOver={(e) => {
+            if (skillsInput.trim()) e.target.style.transform = "scale(1.05)";
+          }}
+          onMouseOut={(e) => {
+            if (skillsInput.trim()) e.target.style.transform = "scale(1)";
+          }}
         >
           Get Recommendation
         </button>
