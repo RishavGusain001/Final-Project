@@ -159,12 +159,10 @@ useEffect(() => {
       >
         🚀 Start Practice
       </button>
-
     </div>
   )}
-
     {/* Graph */}
-    <div className="bg-white p-6 rounded-2xl shadow-sm">
+    <div className="bg-white p-6 rounded-2xl shadow-sm mt-4">
       <h2>Performance Graph</h2>
       {graphData.length === 0 ? (
         <p className="text-gray-500 mt-2">

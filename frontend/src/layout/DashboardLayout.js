@@ -6,9 +6,8 @@ const DashboardLayout = ({ children }) => {
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const [testOpen, setTestOpen] = useState(false);
-  const [resumeOpen, setResumeOpen] = useState(false);
-  const [careerOpen, setCareerOpen] = useState(false);
+  // 🔥 Only ONE dropdown active
+  const [activeMenu, setActiveMenu] = useState(null);
 
   const logout = () => {
     localStorage.removeItem("token");
@@ -31,7 +30,7 @@ const DashboardLayout = ({ children }) => {
       {/* Sidebar */}
       <div
         className={`fixed md:static z-30 top-0 left-0 h-full w-64 bg-white shadow-lg p-6 
-        transform transition-transform duration-300
+        transform transition-transform duration-300 overflow-y-auto
         ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
         md:translate-x-0`}
       >
@@ -45,7 +44,7 @@ const DashboardLayout = ({ children }) => {
           {/* Dashboard */}
           <Link
             to="/dashboard"
-            className="flex items-center gap-2 hover:text-blue-600 font-semibold text-[15px] tracking-wide"
+            className="no-underline text-gray-800 font-semibold transition flex items-center gap-2 hover:text-blue-600 text-[15px]"
           >
             🏠 Dashboard
           </Link>
@@ -53,22 +52,21 @@ const DashboardLayout = ({ children }) => {
           {/* TEST */}
           <div>
             <button
-              onClick={() => setTestOpen(!testOpen)}
-              className="flex justify-between items-center w-full hover:text-blue-600 font-bold text-[15.5px] tracking-wide"
+              onClick={() =>
+                setActiveMenu(activeMenu === "test" ? null : "test")
+              }
+              className="flex justify-between items-center w-full hover:text-blue-600 font-bold text-[15.5px]"
             >
-              <span className="flex items-center gap-2">
-                🧪 Tests
-              </span>
-              <span>{testOpen ? "▲" : "▼"}</span>
+              <span className="flex items-center gap-2">🧪 Tests</span>
+              <span>{activeMenu === "test" ? "▲" : "▼"}</span>
             </button>
 
-            {testOpen && (
+            {activeMenu === "test" && (
               <div className="ml-6 mt-2 flex flex-col gap-2">
-                <Link to="/test" className="hover:text-blue-600 font-medium text-[14px]">📝 Take Test</Link>
-                <Link to="/analysis" className="hover:text-blue-600 font-medium text-[14px]">📊 Analysis</Link>
-                <Link to="/history" className="hover:text-blue-600 font-medium text-[14px]">📜 History</Link>
-                <Link to="/practice" className="hover:text-blue-600 font-medium text-[14px]">🎯 Practice</Link>
-                <Link to="/leaderboard" className="hover:text-blue-600 font-medium text-[14px]"></Link>
+                <Link to="/test" className="no-underline text-gray-800 hover:text-blue-600 font-medium text-[14px]">📝 Take Test</Link>
+                <Link to="/analysis" className="no-underline text-gray-800 hover:text-blue-600 font-medium text-[14px]">📊 Analysis</Link>
+                <Link to="/history" className="no-underline text-gray-800 hover:text-blue-600 font-medium text-[14px]">📜 History</Link>
+                <Link to="/practice" className="no-underline text-gray-800 hover:text-blue-600 font-medium text-[14px]">🎯 Practice</Link>
               </div>
             )}
           </div>
@@ -76,20 +74,20 @@ const DashboardLayout = ({ children }) => {
           {/* RESUME */}
           <div>
             <button
-              onClick={() => setResumeOpen(!resumeOpen)}
-              className="flex justify-between items-center w-full hover:text-blue-600 font-bold text-[15.5px] tracking-wide"
+              onClick={() =>
+                setActiveMenu(activeMenu === "resume" ? null : "resume")
+              }
+              className="flex justify-between items-center w-full hover:text-blue-600 font-bold text-[15.5px]"
             >
-              <span className="flex items-center gap-2">
-                📄 Resume
-              </span>
-              <span>{resumeOpen ? "▲" : "▼"}</span>
+              <span className="flex items-center gap-2">📄 Resume</span>
+              <span>{activeMenu === "resume" ? "▲" : "▼"}</span>
             </button>
 
-            {resumeOpen && (
+            {activeMenu === "resume" && (
               <div className="ml-6 mt-2 flex flex-col gap-2">
-                <Link to="/resume" className="hover:text-blue-600 font-medium text-[14px]">⬆️ Upload</Link>
-                <Link to="/resume/result" className="hover:text-blue-600 font-medium text-[14px]">📊 Analysis</Link>
-                <Link to="/resume/history" className="hover:text-blue-600 font-medium text-[14px]">🕒 History</Link>
+                <Link to="/resume" className="no-underline text-gray-800 hover:text-blue-600 font-medium text-[14px]">⬆️ Upload</Link>
+                <Link to="/resume/result" className="no-underline text-gray-800 hover:text-blue-600 font-medium text-[14px]">📊 Analysis</Link>
+                <Link to="/resume/history" className="no-underline text-gray-800 hover:text-blue-600 font-medium text-[14px]">🕒 History</Link>
               </div>
             )}
           </div>
@@ -97,25 +95,35 @@ const DashboardLayout = ({ children }) => {
           {/* CAREER */}
           <div>
             <button
-              onClick={() => setCareerOpen(!careerOpen)}
-              className="flex justify-between items-center w-full hover:text-blue-600 font-bold text-[15.5px] tracking-wide"
+              onClick={() =>
+                setActiveMenu(activeMenu === "career" ? null : "career")
+              }
+              className="flex justify-between items-center w-full hover:text-blue-600 font-bold text-[15.5px]"
             >
-              <span className="flex items-center gap-2">
-                🎯 Career
-              </span>
-              <span>{careerOpen ? "▲" : "▼"}</span>
+              <span className="flex items-center gap-2">🎯 Career</span>
+              <span>{activeMenu === "career" ? "▲" : "▼"}</span>
             </button>
 
-            {careerOpen && (
+            {activeMenu === "career" && (
               <div className="ml-6 mt-2 flex flex-col gap-2">
-                <Link to="/career" className="hover:text-blue-600 font-medium text-[14px]">📌 Recommendation</Link>
-                <Link to="/roadmap" className="hover:text-blue-600 font-medium text-[14px]">🗺️ Roadmap</Link>
-                <Link to="/skill-gap" className="hover:text-blue-600 font-medium text-[14px]">📉 Skill Gap</Link>
-                <Link to="/tasks" className="hover:text-blue-600 font-medium text-[14px]">📋 Tasks</Link>
+                <Link to="/career" className="no-underline text-gray-800 hover:text-blue-600 font-medium text-[14px]">📌 Recommendation</Link>
+                <Link to="/roadmap" className="no-underline text-gray-800 hover:text-blue-600 font-medium text-[14px]">🗺️ Roadmap</Link>
+                <Link to="/skill-gap" className="no-underline text-gray-800 hover:text-blue-600 font-medium text-[14px]">📉 Skill Gap</Link>
               </div>
             )}
           </div>
-
+            <Link
+            to="/tasks"
+            className="no-underline text-gray-800 font-semibold transition flex items-center gap-2 hover:text-blue-600 text-[15px]"
+          >
+            📋 Tasks
+          </Link>
+          <Link
+            to="/leaderboard"
+            className="no-underline text-gray-800 font-semibold transition flex items-center gap-2 hover:text-blue-600 text-[15px]"
+          >
+            🏆 Leaderboard
+          </Link>
           {/* Logout */}
           <button
             onClick={logout}
@@ -123,12 +131,6 @@ const DashboardLayout = ({ children }) => {
           >
             🚪 Logout
           </button>
-          <Link
-            to="/leaderboard"
-            className="flex items-center gap-2 hover:text-blue-600 font-semibold text-[15px] tracking-wide"
-          >
-            🏆 Leaderboard
-          </Link>
 
           {/* ADMIN */}
           {role === "admin" && (
@@ -136,11 +138,11 @@ const DashboardLayout = ({ children }) => {
               <hr className="my-3" />
               <p className="text-gray-400 text-sm font-medium">Admin Panel</p>
 
-              <Link to="/admin/add-question" className="hover:text-blue-600 font-medium text-[14px]">
+              <Link to="/admin/add-question" className="no-underline text-gray-800 hover:text-blue-600 font-semibold transition">
                 ➕ Add Question
               </Link>
 
-              <Link to="/admin/manage-questions" className="hover:text-blue-600 font-medium text-[14px]">
+              <Link to="/admin/manage-questions" className="no-underline text-gray-800 hover:text-blue-600 font-semibold transition">
                 🛠 Manage Questions
               </Link>
             </>
@@ -148,8 +150,8 @@ const DashboardLayout = ({ children }) => {
         </nav>
       </div>
 
-      {/* Main */}
-      <div className="flex-1 flex flex-col">
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col h-screen overflow-hidden">
 
         {/* Mobile Top */}
         <div className="bg-white shadow-sm p-4 flex items-center md:hidden">
@@ -159,7 +161,8 @@ const DashboardLayout = ({ children }) => {
           <h1 className="ml-4 font-semibold">Dashboard</h1>
         </div>
 
-        <div className="p-6 overflow-y-auto">
+        {/* 🔥 FIXED SCROLL AREA */}
+        <div className="p-6 overflow-y-auto flex-1 scrollbar-thin">
           {children}
         </div>
 
