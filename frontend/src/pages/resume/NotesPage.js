@@ -5,107 +5,145 @@ function NotesPage() {
   const [subject, setSubject] = useState("");
   const [topic, setTopic] = useState("");
   const [notes, setNotes] = useState("");
-  const [image, setImage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const generateNotes = async () => {
-    if (!subject || !topic) {
-      alert("Enter subject and topic");
+    // Clear previous
+    setError("");
+    setNotes("");
+    
+    // Validate
+    if (!subject.trim()) {
+      setError("Please enter a subject");
       return;
     }
-
-    setLoading(true);
-
-    try {
-      const res = await API.post("/practice/generate-notes", {
-        subject,
-        topic,
-      });
-
-      setNotes(res.data.notes);
-      setImage(res.data.image_url);
-    } catch (err) {
-      alert("Error generating notes");
+    
+    if (!topic.trim()) {
+      setError("Please enter a topic");
+      return;
     }
-
+    
+    setLoading(true);
+    
+    try {
+      console.log("Sending:", { subject, topic });
+      
+      const response = await API.post("/practice/generate-notes", {
+        subject: subject,
+        topic: topic
+      });
+      
+      console.log("Response:", response.data);
+      
+      if (response.data.notes) {
+        setNotes(response.data.notes);
+      } else {
+        setError("No notes received");
+      }
+    } catch (err) {
+      console.error("Error:", err);
+      if (err.response) {
+        setError(`Server Error: ${err.response.status} - ${JSON.stringify(err.response.data)}`);
+      } else if (err.request) {
+        setError("Cannot connect to server. Make sure backend is running on port 8000");
+      } else {
+        setError(`Error: ${err.message}`);
+      }
+    }
+    
     setLoading(false);
   };
 
   const downloadPDF = async () => {
+    if (!notes) {
+      setError("Generate notes first!");
+      return;
+    }
+    
     try {
-      const res = await API.post(
+      const response = await API.post(
         "/practice/download-pdf",
-        { subject, topic, notes },
-        { responseType: "blob" }
+        {
+          subject: subject,
+          topic: topic,
+          notes: notes
+        },
+        {
+          responseType: "blob"
+        }
       );
-
-      const url = window.URL.createObjectURL(new Blob([res.data]));
+      
+      const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", "Notes.pdf");
+      link.setAttribute("download", `${subject}_${topic}_Notes.pdf`);
       document.body.appendChild(link);
       link.click();
-    } catch {
-      alert("Error downloading PDF");
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      setError("Error downloading PDF");
     }
   };
 
   return (
-    <div className="min-h-screen bg-blue-50 p-8">
-      <div className="max-w-4xl mx-auto bg-white p-8 rounded-2xl shadow-lg">
-
-        <h2 className="text-3xl font-bold text-center text-blue-700 mb-6">
-          📘 AI Smart Notes
-        </h2>
-
-        <input
-          placeholder="Subject"
-          value={subject}
-          onChange={(e) => setSubject(e.target.value)}
-          className="w-full p-3 mb-3 border rounded-lg"
-        />
-
-        <input
-          placeholder="Topic"
-          value={topic}
-          onChange={(e) => setTopic(e.target.value)}
-          className="w-full p-3 mb-4 border rounded-lg"
-        />
-
+    <div style={{ minHeight: "100vh", background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)", padding: "20px" }}>
+      <div style={{ maxWidth: "800px", margin: "0 auto", background: "white", borderRadius: "20px", padding: "30px", boxShadow: "0 20px 60px rgba(0,0,0,0.3)" }}>
+        <h1 style={{ textAlign: "center", color: "#667eea", marginBottom: "30px", fontSize: "2em" }}>
+          📘 AI Notes Generator
+        </h1>
+        
+        <div style={{ marginBottom: "20px" }}>
+          <label style={{ display: "block", marginBottom: "8px", fontWeight: "bold" }}>Subject:</label>
+          <input
+            type="text"
+            placeholder="e.g., Python, JavaScript, Data Structures"
+            value={subject}
+            onChange={(e) => setSubject(e.target.value)}
+            style={{ width: "100%", padding: "12px", border: "2px solid #e0e0e0", borderRadius: "10px", fontSize: "16px" }}
+          />
+        </div>
+        
+        <div style={{ marginBottom: "20px" }}>
+          <label style={{ display: "block", marginBottom: "8px", fontWeight: "bold" }}>Topic:</label>
+          <input
+            type="text"
+            placeholder="e.g., Sorting Algorithms, Recursion, OOP"
+            value={topic}
+            onChange={(e) => setTopic(e.target.value)}
+            style={{ width: "100%", padding: "12px", border: "2px solid #e0e0e0", borderRadius: "10px", fontSize: "16px" }}
+          />
+        </div>
+        
         <button
           onClick={generateNotes}
-          className="w-full bg-blue-600 text-white py-3 rounded-lg"
+          disabled={loading}
+          style={{ width: "100%", padding: "14px", background: "#667eea", color: "white", border: "none", borderRadius: "10px", fontSize: "16px", fontWeight: "bold", cursor: "pointer", marginBottom: "20px" }}
         >
-          {loading ? "Generating..." : "Generate Notes"}
+          {loading ? "⏳ Generating..." : "✨ Generate Notes"}
         </button>
-
-        {notes && (
-          <>
-            <div className="mt-6 bg-blue-50 p-6 rounded-xl whitespace-pre-line font-sans font-bold text-base text-blue-900">
-              {notes}
-            </div>
-          </>
-        )}
-
-        {image && (
-          <div className="mt-6">
-            <p className="text-blue-600 font-semibold mb-2">
-              📊 Related Diagram
-            </p>
-            <img
-              src={image}
-              alt="diagram"
-              className="w-full max-h-80 object-contain bg-white p-4 rounded-xl border shadow"
-            />
-            <button
-              onClick={downloadPDF}
-              className="mt-4 w-full bg-green-600 text-white py-2 rounded-lg"
-            >
-              📄 Download PDF
-            </button>
+        
+        {error && (
+          <div style={{ padding: "12px", background: "#fee", border: "1px solid #fcc", borderRadius: "10px", color: "#c33", marginBottom: "20px" }}>
+            ⚠️ {error}
           </div>
         )}
-
+        
+        {notes && (
+          <>
+            <div style={{ background: "#f5f5f5", padding: "20px", borderRadius: "10px", marginBottom: "20px", whiteSpace: "pre-line" }}>
+              {notes}
+            </div>
+            
+            <button
+              onClick={downloadPDF}
+              style={{ width: "100%", padding: "12px", background: "#4caf50", color: "white", border: "none", borderRadius: "10px", fontSize: "16px", cursor: "pointer" }}
+            >
+              📥 Download PDF
+            </button>
+          </>
+        )}
       </div>
     </div>
   );

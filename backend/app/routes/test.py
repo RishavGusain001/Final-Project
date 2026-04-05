@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException 
 from sqlalchemy.orm import Session
 from sqlalchemy.sql.expression import func
 from datetime import datetime
 from typing import Optional
-
+from sqlalchemy import func
 from app.database import get_db
 from app.models import Question, TestAttempt, StudentAnswer
 from app.auth import get_current_user
@@ -24,7 +24,7 @@ def get_subjects(db: Session = Depends(get_db)):
     )
 
     return [
-        {"id": s[0], "name": f"Subject {s[0]}"}
+        {"id": s[0], "name": s[0]}   # ✅ changed here
         for s in subjects
     ]
 
@@ -35,14 +35,17 @@ def get_subjects(db: Session = Depends(get_db)):
 @router.get("/random")
 def get_random_questions(
     count: int = 10,
-    subject_id: Optional[int] = None,
+    subject_id: Optional[str] = None,   # ✅ changed int → str
     db: Session = Depends(get_db)
 ):
     query = db.query(Question)
 
     # filter by subject if selected
     if subject_id:
-        query = query.filter(Question.subject_id == subject_id)
+        query = query.filter(
+            func.lower(func.trim(Question.subject_id)) ==
+            func.lower(func.trim(subject_id))
+        )
 
     questions = query.order_by(func.rand()).limit(count).all()
 
@@ -61,16 +64,6 @@ def submit_test(
     db: Session = Depends(get_db),
     user_id: int = Depends(get_current_user)
 ):
-    """
-    payload = {
-        "subject_id": 1 (optional),
-        "answers": {
-            "1": "A",
-            "2": "B"
-        }
-    }
-    """
-
     answers = payload.get("answers", {})
     subject_id = payload.get("subject_id")
 
@@ -80,9 +73,6 @@ def submit_test(
     score = 0
     total = len(answers)
 
-    # ====================
-    # CREATE TEST ATTEMPT
-    # ====================
     new_attempt = TestAttempt(
         user_id=user_id,
         subject=str(subject_id) if subject_id else "Mixed",
@@ -95,12 +85,9 @@ def submit_test(
     db.commit()
     db.refresh(new_attempt)
 
-    # ====================
-    # SAVE ANSWERS
-    # ====================
     for q_id, user_ans in answers.items():
         question = db.query(Question).filter(
-            Question.id == int(q_id)
+            Question.id == (q_id)
         ).first()
 
         if not question:
@@ -120,9 +107,6 @@ def submit_test(
 
         db.add(student_answer)
 
-    # ====================
-    # UPDATE SCORE
-    # ====================
     new_attempt.score = score
     db.commit()
 
@@ -237,8 +221,8 @@ def get_analytics(
     db: Session = Depends(get_db),
     user_id: int = Depends(get_current_user)
 ):
-    answers = db.query(StudentAnswer).filter(
-        StudentAnswer.user_id == user_id
+    answers = db.query(StudentAnswer).join(TestAttempt).filter(   # ✅ fixed
+        TestAttempt.user_id == user_id
     ).all()
 
     total = len(answers)
@@ -259,8 +243,8 @@ def get_streak(
     db: Session = Depends(get_db),
     user_id: int = Depends(get_current_user)
 ):
-    answers = db.query(StudentAnswer).filter(
-        StudentAnswer.user_id == user_id
+    answers = db.query(StudentAnswer).join(TestAttempt).filter(   # ✅ fixed
+        TestAttempt.user_id == user_id
     ).all()
 
     dates = [a.created_at.date() for a in answers if a.created_at]

@@ -4,7 +4,7 @@ from sqlalchemy import func
 from app.models import Subject
 from app.database import get_db
 from app.auth import get_current_user
-from app.models import TestAttempt
+from app.models import TestAttempt,Question,StudentAnswer
 
 router = APIRouter(prefix="/analytics", tags=["Analytics"])
 
@@ -14,17 +14,19 @@ def ai_insights(
     user_id: int = Depends(get_current_user)
 ):
 
-    results = (
-        db.query(
-            Subject.name,
-            func.sum(TestAttempt.score).label("total_score"),
-            func.sum(TestAttempt.total_questions).label("total_questions")
-        )
-        .join(Subject, Subject.id == TestAttempt.subject)
-        .filter(TestAttempt.user_id == user_id)
-        .group_by(Subject.name)
-        .all()
-    )
+    results = db.query(
+        Question.subject_id.label('subject_name'),
+        func.sum(StudentAnswer.is_correct).label('correct_answers'),
+        func.count(StudentAnswer.id).label('total_answers')
+    ).join(
+        Question, StudentAnswer.question_id == Question.id
+    ).join(
+        TestAttempt, StudentAnswer.attempt_id == TestAttempt.id
+    ).filter(
+        TestAttempt.user_id == user_id
+    ).group_by(
+        Question.subject_id
+    ).all()
 
     if not results:
         return {

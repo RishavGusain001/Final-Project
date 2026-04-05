@@ -4,41 +4,153 @@
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
+    <meta name="theme-color" content="#3b82f6" />
+    
+    <!-- SEO Meta Tags -->
     <meta
       name="description"
-      content="Web site created using create-react-app"
+      content="AI-Powered Learning Platform - Generate smart notes, practice tests, and track your progress. Master coding, logical reasoning, and verbal ability with our intelligent tools."
     />
+    <meta name="keywords" content="AI notes, practice tests, coding, logical reasoning, verbal ability, exam preparation, smart learning" />
+    <meta name="author" content="Learning Platform" />
+    <meta name="robots" content="index, follow" />
+    
+    <!-- Open Graph / Social Media Meta Tags -->
+    <meta property="og:title" content="AI Learning Platform | Smart Notes & Practice Tests" />
+    <meta property="og:description" content="Generate AI-powered notes, take practice tests, and track your learning progress." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://yourdomain.com" />
+    <meta property="og:image" content="%PUBLIC_URL%/og-image.png" />
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="AI Learning Platform" />
+    <meta name="twitter:description" content="Smart learning with AI-generated notes and practice tests" />
+    
+    <!-- Apple Touch Icon -->
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-    -->
+    
+    <!-- Manifest for PWA -->
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
-
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
-      <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <title>React App</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome (Optional - for additional icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    
+    <!-- Custom Global Styles -->
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      
+      body {
+        font-family: 'Inter', 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+          'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+          sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+      }
+      
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+      }
+      
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+      }
+      
+      ::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 10px;
+      }
+      
+      ::-webkit-scrollbar-thumb:hover {
+        background: #555;
+      }
+      
+      /* Loading Animation */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      
+      #root {
+        animation: fadeIn 0.5s ease-out;
+      }
+      
+      /* Selection Color */
+      ::selection {
+        background: #667eea;
+        color: white;
+      }
+      
+      ::-moz-selection {
+        background: #667eea;
+        color: white;
+      }
+      
+      /* Smooth Focus Outline */
+      :focus {
+        outline: none;
+      }
+      
+      :focus-visible {
+        outline: 2px solid #667eea;
+        outline-offset: 2px;
+      }
+    </style>
+    
+    <title>AI Learning Platform | Smart Notes & Practice Tests</title>
   </head>
   <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <noscript>
+      <div style="text-align: center; padding: 50px; font-family: Arial, sans-serif;">
+        <h2>⚠️ JavaScript is disabled</h2>
+        <p>Please enable JavaScript to use the AI Learning Platform.</p>
+        <p>This application requires JavaScript to generate notes, take tests, and access all features.</p>
+      </div>
+    </noscript>
+    
     <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
-
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
-
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
+    
+    <!-- Optional: Add a simple loading indicator while React loads -->
+    <div id="loading-indicator" style="display: none;">
+      <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
+        <div style="width: 50px; height: 50px; border: 4px solid #f3f3f3; border-top: 4px solid #667eea; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+        <p style="margin-top: 20px; color: white;">Loading amazing content...</p>
+      </div>
+    </div>
+    
+    <style>
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+    </style>
+    
+    <script>
+      // Hide loading indicator when React mounts
+      window.addEventListener('load', function() {
+        const loader = document.getElementById('loading-indicator');
+        if (loader) {
+          loader.style.display = 'none';
+        }
+      });
+    </script>
   </body>
 </html>
