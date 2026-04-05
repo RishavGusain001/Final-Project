@@ -1,6 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from sqlalchemy.sql.expression import func
 from datetime import datetime
+from typing import Optional
 
 from app.database import get_db
 from app.models import Question, TestAttempt, StudentAnswer
@@ -9,22 +11,132 @@ from app.ml.predictor import predict_final_score
 
 router = APIRouter(prefix="/test", tags=["Test"])
 
-# ------------------------
-# Get Questions
-# ------------------------
-@router.get("/questions/{subject_id}")
-def get_questions(subject_id: str, db: Session = Depends(get_db)):
-    questions = db.query(Question).filter(
-        Question.subject_id == subject_id
-    ).all()
+
+# ============================
+# GET SUBJECTS (DYNAMIC)
+# ============================
+@router.get("/subjects")
+def get_subjects(db: Session = Depends(get_db)):
+    subjects = (
+        db.query(Question.subject_id)
+        .distinct()
+        .all()
+    )
+
+    return [
+        {"id": s[0], "name": f"Subject {s[0]}"}
+        for s in subjects
+    ]
+
+
+# ============================
+# GET RANDOM QUESTIONS
+# ============================
+@router.get("/random")
+def get_random_questions(
+    count: int = 10,
+    subject_id: Optional[int] = None,
+    db: Session = Depends(get_db)
+):
+    query = db.query(Question)
+
+    # filter by subject if selected
+    if subject_id:
+        query = query.filter(Question.subject_id == subject_id)
+
+    questions = query.order_by(func.rand()).limit(count).all()
 
     if not questions:
         raise HTTPException(status_code=404, detail="No questions found")
+
     return questions
 
-# ------------------------
-# Performance History
-# ------------------------
+
+# ============================
+# SUBMIT TEST
+# ============================
+@router.post("/submit")
+def submit_test(
+    payload: dict,
+    db: Session = Depends(get_db),
+    user_id: int = Depends(get_current_user)
+):
+    """
+    payload = {
+        "subject_id": 1 (optional),
+        "answers": {
+            "1": "A",
+            "2": "B"
+        }
+    }
+    """
+
+    answers = payload.get("answers", {})
+    subject_id = payload.get("subject_id")
+
+    if not answers:
+        raise HTTPException(status_code=400, detail="No answers submitted")
+
+    score = 0
+    total = len(answers)
+
+    # ====================
+    # CREATE TEST ATTEMPT
+    # ====================
+    new_attempt = TestAttempt(
+        user_id=user_id,
+        subject=str(subject_id) if subject_id else "Mixed",
+        score=0,
+        total_questions=total,
+        attempted_at=datetime.utcnow()
+    )
+
+    db.add(new_attempt)
+    db.commit()
+    db.refresh(new_attempt)
+
+    # ====================
+    # SAVE ANSWERS
+    # ====================
+    for q_id, user_ans in answers.items():
+        question = db.query(Question).filter(
+            Question.id == int(q_id)
+        ).first()
+
+        if not question:
+            continue
+
+        is_correct = user_ans == question.correct_option
+
+        if is_correct:
+            score += 1
+
+        student_answer = StudentAnswer(
+            attempt_id=new_attempt.id,
+            question_id=question.id,
+            selected_option=user_ans,
+            is_correct=is_correct
+        )
+
+        db.add(student_answer)
+
+    # ====================
+    # UPDATE SCORE
+    # ====================
+    new_attempt.score = score
+    db.commit()
+
+    return {
+        "message": "Test submitted successfully",
+        "score": score,
+        "total": total,
+        "percentage": round((score / total) * 100, 2)
+    }
+
+
+# ============================
+# PERFORMANCE HISTORY
+# ============================
 @router.get("/performance")
 def performance(
     db: Session = Depends(get_db),
@@ -33,11 +145,13 @@ def performance(
     attempts = db.query(TestAttempt).filter(
         TestAttempt.user_id == user_id
     ).all()
+
     return attempts
 
-# ------------------------
-# AI Prediction
-# ------------------------
+
+# ============================
+# AI PREDICTION
+# ============================
 @router.get("/predict")
 def predict_performance(
     db: Session = Depends(get_db),
@@ -48,6 +162,13 @@ def predict_performance(
     ).all()
 
     scores = [a.score for a in attempts]
+
+    if not scores:
+        return {
+            "predicted_score": 0,
+            "risk_level": "No Data"
+        }
+
     predicted = predict_final_score(scores)
 
     risk = "Low"
@@ -61,74 +182,16 @@ def predict_performance(
         "risk_level": risk
     }
 
-# ------------------------
-# Submit Test
-# ------------------------
-@router.post("/submit")
-def submit_test(
-    subject_id: str,
-    answers: dict,
-    db: Session = Depends(get_db),
-    user_id: int = Depends(get_current_user)
-):
-    questions = db.query(Question).filter(
-        Question.subject_id == subject_id
-    ).all()
 
-    if not questions:
-        raise HTTPException(status_code=404, detail="No questions found")
-
-    # Step 1: Create TestAttempt
-    new_attempt = TestAttempt(
-        user_id=user_id,
-        subject=subject_id,
-        score=0,  # temporary, updated after saving answers
-        total_questions=len(questions),
-        attempted_at=datetime.utcnow()
-    )
-
-    db.add(new_attempt)
-    db.commit()
-    db.refresh(new_attempt)
-
-    score = 0
-
-    # Step 2: Save Student Answers
-    for q in questions:
-        if str(q.id) in answers:
-            selected = answers[str(q.id)]
-            is_correct = selected == q.correct_option
-
-            if is_correct:
-                score += 1
-
-            student_answer = StudentAnswer(
-                attempt_id=new_attempt.id,
-                question_id=q.id,
-                selected_option=selected,
-                is_correct=is_correct
-            )
-            db.add(student_answer)
-
-    # Step 3: Update final score
-    new_attempt.score = score
-    db.commit()
-
-    return {
-        "score": score,
-        "total_questions": len(questions)
-    }
-
-# ------------------------
-# Test Analysis Route
-# ------------------------
+# ============================
+# TEST ANALYSIS
+# ============================
 @router.get("/analysis/{attempt_id}")
 def test_analysis(
     attempt_id: int,
     db: Session = Depends(get_db),
     user_id: int = Depends(get_current_user)
 ):
-    # Verify attempt belongs to user
     attempt = db.query(TestAttempt).filter(
         TestAttempt.id == attempt_id,
         TestAttempt.user_id == user_id
@@ -137,19 +200,19 @@ def test_analysis(
     if not attempt:
         raise HTTPException(status_code=404, detail="Attempt not found")
 
-    # Fetch all answers with questions
     answers = db.query(StudentAnswer).filter(
         StudentAnswer.attempt_id == attempt_id
     ).all()
 
     result = []
+
     for ans in answers:
         question = db.query(Question).filter(
             Question.id == ans.question_id
         ).first()
 
         if not question:
-            continue 
+            continue
 
         result.append({
             "question_id": question.id,
@@ -164,3 +227,44 @@ def test_analysis(
         })
 
     return result
+
+
+# ============================
+# ANALYTICS (DASHBOARD)
+# ============================
+@router.get("/analytics")
+def get_analytics(
+    db: Session = Depends(get_db),
+    user_id: int = Depends(get_current_user)
+):
+    answers = db.query(StudentAnswer).filter(
+        StudentAnswer.user_id == user_id
+    ).all()
+
+    total = len(answers)
+    correct = len([a for a in answers if a.is_correct])
+
+    return {
+        "total_attempts": total,
+        "correct_answers": correct,
+        "accuracy": round((correct / total) * 100, 2) if total else 0
+    }
+
+
+# ============================
+# STREAK
+# ============================
+@router.get("/streak")
+def get_streak(
+    db: Session = Depends(get_db),
+    user_id: int = Depends(get_current_user)
+):
+    answers = db.query(StudentAnswer).filter(
+        StudentAnswer.user_id == user_id
+    ).all()
+
+    dates = [a.created_at.date() for a in answers if a.created_at]
+
+    streak = len(set(dates))
+
+    return {"streak": streak}

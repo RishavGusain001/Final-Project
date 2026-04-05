@@ -61,7 +61,8 @@ class StudentAnswer(Base):
     question_id = Column(Integer, ForeignKey("questions.id"))
     selected_option = Column(String(1))
     is_correct = Column(Boolean)
-
+    created_at = Column(DateTime, default=datetime.utcnow)
+    
 class Task(Base):
     __tablename__ = "tasks"
 

@@ -48,6 +48,12 @@ const DashboardLayout = ({ children }) => {
           >
             🏠 Dashboard
           </Link>
+          <Link
+            to="/notes"
+            className="no-underline text-gray-800 font-semibold transition flex items-center gap-2 hover:text-blue-600 text-[15px]"
+          >
+            📝 Notes
+          </Link>
 
           {/* TEST */}
           <div>
@@ -85,9 +91,9 @@ const DashboardLayout = ({ children }) => {
 
             {activeMenu === "resume" && (
               <div className="ml-6 mt-2 flex flex-col gap-2">
-                <Link to="/resume" className="no-underline text-gray-800 hover:text-blue-600 font-medium text-[14px]">⬆️ Upload</Link>
-                <Link to="/resume/result" className="no-underline text-gray-800 hover:text-blue-600 font-medium text-[14px]">📊 Analysis</Link>
-                <Link to="/resume/history" className="no-underline text-gray-800 hover:text-blue-600 font-medium text-[14px]">🕒 History</Link>
+                <Link to="/resume" className="no-underline text-gray-800 hover:text-blue-600 font-medium text-[14px]">📊 Resume Analysis</Link>
+                <Link to="/resume/builder" className="no-underline text-gray-800 hover:text-blue-600 font-medium text-[14px]">🧾 Resume Builder</Link>
+                <Link to="/resume/history" className="no-underline text-gray-800 hover:text-blue-600 font-medium text-[14px]">🕒 Resume History</Link>
               </div>
             )}
           </div>

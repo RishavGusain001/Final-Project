@@ -19,6 +19,9 @@ import Roadmap from "./pages/member2/Roadmap";
 import ResumeAnalysis from './pages/resume/ResumeAnalysis';
 import ResumeUpload from './pages/resume/ResumeUpload';
 import ResumeHistory from './pages/resume/ResumeHistory';
+import ResumeBuilder from './pages/resume/ResumeBuilder';
+import NotesPage from './pages/resume/NotesPage';
+import WeakTopics from './pages/resume/WeakTopics';
 
 function App() {
   return (
@@ -44,6 +47,9 @@ function App() {
         <Route path="/resume" element={<ResumeUpload />} />
         <Route path="/resume/result" element={<ResumeAnalysis />} />
         <Route path="/resume/history" element={<ResumeHistory />} />
+        <Route path="/resume/builder" element={<ResumeBuilder />} />
+        <Route path="/notes" element={<NotesPage />} />
+        <Route path="/weak-topics" element={<WeakTopics />} />
       </Routes>
     </Router>
   );

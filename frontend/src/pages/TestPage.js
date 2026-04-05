@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 
 const TestPage = () => {
   const [subjectId, setSubjectId] = useState("");
+  const [questionCount, setQuestionCount] = useState(10);
+
   const [questions, setQuestions] = useState([]);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState({});
@@ -18,6 +20,16 @@ const TestPage = () => {
   const [showFiveMinWarning, setShowFiveMinWarning] = useState(false);
 
   const navigate = useNavigate();
+  const [subjects, setSubjects] = useState([]);
+
+  useEffect(() => {
+    const fetchSubjects = async () => {
+      const res = await API.get("/test/subjects");
+      setSubjects(res.data);
+    };
+
+    fetchSubjects();
+  }, []);
 
   // ================= DISABLE RIGHT CLICK =================
   useEffect(() => {
@@ -38,15 +50,17 @@ const TestPage = () => {
     return () => window.removeEventListener("popstate", handlePopState);
   }, []);
 
-  // ================= TIMER =================
+  // ================= SUBMIT =================
   const submitTest = useCallback(
     async (auto = false) => {
       setTimerActive(false);
 
       await API.post(
-        `/test/submit?subject_id=${subjectId}`,
-        answers,
-        { headers: { "Content-Type": "application/json" } }
+        `/test/submit`,
+        {
+          subject_id: subjectId || null,
+          answers,
+        }
       );
 
       if (!auto) alert("Test Submitted Successfully");
@@ -55,6 +69,7 @@ const TestPage = () => {
     [subjectId, answers, navigate]
   );
 
+  // ================= TIMER =================
   useEffect(() => {
     if (!timerActive) return;
 
@@ -78,20 +93,28 @@ const TestPage = () => {
 
   // ================= START TEST =================
   const startTest = async () => {
-    if (!subjectId) return alert("Select subject");
+    let url = `/test/random?count=${questionCount}`;
 
-    const res = await API.get(`/test/questions/${subjectId}`);
+    if (subjectId) {
+      url += `&subject_id=${subjectId}`;
+    }
+
+    const res = await API.get(url);
+
+    const shuffled = res.data.sort(() => Math.random() - 0.5);
 
     const initialStatus = {};
-    res.data.forEach((q) => {
+    shuffled.forEach((q) => {
       initialStatus[q.id] = "notVisited";
     });
 
-    setQuestions(res.data);
+    setQuestions(shuffled);
     setQuestionStatus(initialStatus);
     setStarted(true);
     setTimerActive(true);
-    setTimeLeft(1800);
+
+    // dynamic time (1 min per question)
+    setTimeLeft(questionCount * 60);
   };
 
   // ================= OPTION SELECT =================
@@ -107,7 +130,7 @@ const TestPage = () => {
     }));
   };
 
-  // ================= CLEAR RESPONSE =================
+  // ================= CLEAR =================
   const clearResponse = () => {
     const qId = questions[currentQuestion].id;
 
@@ -121,7 +144,7 @@ const TestPage = () => {
     }));
   };
 
-  // ================= SAVE & NEXT =================
+  // ================= NEXT =================
   const nextQuestion = () => {
     const qId = questions[currentQuestion].id;
 
@@ -154,31 +177,50 @@ const TestPage = () => {
     <>
       {!started ? (
         <DashboardLayout>
-        <div className="max-w-md mx-auto bg-white p-6 rounded-xl shadow">
-          <h2 className="text-xl font-bold mb-4">Start Test</h2>
+          <div className="max-w-md mx-auto bg-white p-6 rounded-xl shadow">
+            <h2 className="text-xl font-bold mb-4">Start Smart Test</h2>
 
-          <select
-            className="w-full p-2 border rounded mb-4"
-            value={subjectId}
-            onChange={(e) => setSubjectId(e.target.value)}
-          >
-            <option value="">Select Subject</option>
-            <option value="1">Math</option>
-            <option value="2">English</option>
-          </select>
+            {/* SUBJECT OPTIONAL */}
+            <select
+              className="w-full p-2 border rounded mb-4"
+              value={subjectId}
+              onChange={(e) => setSubjectId(e.target.value)}
+            >
+              <option value="">All Subjects</option>
 
-          <button
-            onClick={startTest}
-            className="w-full bg-blue-600 text-white p-2 rounded"
-          >
-            Start (30 Minutes)
-          </button>
-        </div>
+              {subjects.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.name}
+                </option>
+              ))}
+            </select>
+
+            {/* QUESTION COUNT */}
+            <select
+              className="w-full p-2 border rounded mb-4"
+              value={questionCount}
+              onChange={(e) => setQuestionCount(e.target.value)}
+            >
+              <option value={5}>5 Questions</option>
+              <option value={10}>10 Questions</option>
+              <option value={15}>15 Questions</option>
+              <option value={20}>20 Questions</option>
+              <option value={25}>25 Questions</option>
+              <option value={30}>30 Questions</option>
+            </select>
+
+            <button
+              onClick={startTest}
+              className="w-full bg-blue-600 text-white p-2 rounded"
+            >
+              Start Test 🚀
+            </button>
+          </div>
         </DashboardLayout>
       ) : (
         <div className="flex gap-6">
 
-          {/* LEFT SIDE */}
+          {/* LEFT */}
           <div className="flex-1 bg-white p-6 rounded-xl shadow">
 
             <div className="flex justify-between mb-4">
@@ -216,14 +258,14 @@ const TestPage = () => {
                 onClick={clearResponse}
                 className="bg-gray-500 text-white px-4 py-2 rounded"
               >
-                Clear Response
+                Clear
               </button>
 
               <button
                 onClick={nextQuestion}
                 className="bg-blue-600 text-white px-4 py-2 rounded"
               >
-                Save & Next
+                Next
               </button>
             </div>
 
@@ -237,9 +279,9 @@ const TestPage = () => {
             </div>
           </div>
 
-          {/* RIGHT SIDE PALETTE */}
+          {/* RIGHT PALETTE */}
           <div className="w-64 bg-white p-4 rounded-xl shadow">
-            <h3 className="font-semibold mb-3">Question Palette</h3>
+            <h3 className="font-semibold mb-3">Palette</h3>
 
             <div className="grid grid-cols-5 gap-2">
               {questions.map((q, index) => (
@@ -258,51 +300,40 @@ const TestPage = () => {
                 </button>
               ))}
             </div>
+          </div>
+          {showFiveMinWarning && (
+          <div className="fixed top-10 left-1/2 transform -translate-x-1/2 bg-yellow-400 px-6 py-3 rounded shadow">
+            ⚠ Only 5 minutes remaining!
+          </div>
+        )}
+        {showSubmitModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center">
+            <div className="bg-white p-6 rounded shadow w-80">
+              <h2 className="text-lg font-bold mb-3">Confirm Submission</h2>
 
-            <div className="mt-5 text-sm space-y-1">
-              <p><span className="inline-block w-3 h-3 bg-green-500 mr-2"></span>Answered</p>
-              <p><span className="inline-block w-3 h-3 bg-red-400 mr-2"></span>Visited</p>
-              <p><span className="inline-block w-3 h-3 bg-gray-300 mr-2"></span>Not Visited</p>
+              <p>Total: {totalQuestions}</p>
+              <p>Answered: {answeredCount}</p>
+              <p>Not Answered: {notAnsweredCount}</p>
+
+              <div className="flex justify-end gap-2 mt-4">
+                <button
+                  onClick={() => setShowSubmitModal(false)}
+                  className="bg-gray-400 px-3 py-1 text-white rounded"
+                >
+                  Cancel
+                </button>
+
+                <button
+                  onClick={() => submitTest(false)}
+                  className="bg-green-600 px-3 py-1 text-white rounded"
+                >
+                  Submit
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* 5 MIN WARNING */}
-      {showFiveMinWarning && (
-        <div className="fixed top-10 left-1/2 transform -translate-x-1/2 bg-yellow-400 text-black px-6 py-3 rounded shadow-lg z-50">
-          ⚠ Only 5 minutes remaining!
-        </div>
-      )}
-
-      {/* SUBMIT MODAL */}
-      {showSubmitModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-xl w-96 shadow-lg">
-            <h2 className="text-lg font-bold mb-4">
-              Confirm Submission
-            </h2>
-
-            <p>Total Questions: {totalQuestions}</p>
-            <p>Answered: {answeredCount}</p>
-            <p>Not Answered: {notAnsweredCount}</p>
-
-            <div className="flex justify-end gap-3 mt-6">
-              <button
-                onClick={() => setShowSubmitModal(false)}
-                className="bg-gray-400 text-white px-4 py-2 rounded"
-              >
-                Cancel
-              </button>
-
-              <button
-                onClick={() => submitTest(false)}
-                className="bg-green-600 text-white px-4 py-2 rounded"
-              >
-                Yes, Submit
-              </button>
-            </div>
-          </div>
         </div>
       )}
     </>
